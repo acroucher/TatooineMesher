@@ -56,7 +56,7 @@ class MeshConstructor:
     - get_merge_triangulation
     """
     POINTS_DTYPE = float_vars(['X', 'Y', 'xt', 'Xt_upstream', 'Xt_downstream', 'Xl', 'xl']) + \
-                              [(var, np.int) for var in ('zone', 'bed')]
+                              [(var, int) for var in ('zone', 'bed')]
     POINTS_FP_DTYPE = float_vars(['X', 'Y', 'Z'])
 
     def __init__(self, section_seq=[], lat_step=None, nb_pts_lat=None, interp_values='LINEAR'):
@@ -70,9 +70,9 @@ class MeshConstructor:
             self.nb_var = 0
 
         self.points = np.empty(0, dtype=MeshConstructor.POINTS_DTYPE)
-        self.nodes_values = np.empty([0, 0, 0], dtype=np.float)
+        self.nodes_values = np.empty([0, 0, 0], dtype=float)
         self.i_pt = int(-1)
-        self.segments = np.empty([0, 2], dtype=np.int)
+        self.segments = np.empty([0, 2], dtype=int)
         self.triangle = {}  # filled by `build_mesh`
 
         self.casiers_nodes_idx = []
@@ -605,8 +605,8 @@ class MeshConstructor:
 
     def interp_2d_values_from_profiles(self):
         """Interpolate values in 2D from profiles"""
-        ux = np.array([], dtype=np.float)
-        vy = np.array([], dtype=np.float)
+        ux = np.array([], dtype=float)
+        vy = np.array([], dtype=float)
         new_xt = self.points['xt']
         new_xl = self.points['xl'] + self.points['zone']
         new_values = np.zeros((self.nb_var, len(self.points)))
@@ -618,7 +618,7 @@ class MeshConstructor:
             vy = np.concatenate((vy, np.array([i] * profile.nb_points)))
 
         for j, var in enumerate(self.var_names()):
-            z = np.array([], dtype=np.float)
+            z = np.array([], dtype=float)
             for profile in self.section_seq:
                 z = np.concatenate((z, profile.coord.values[var]))
 
@@ -657,7 +657,7 @@ class MeshConstructor:
         xl_all = self.points['zone'] + self.points['xl']
         for i_var in range(nb_var):
             values[i_var, :self.nb_nodes_in_riverbed] = np.interp(xl_all,
-                                                                  np.arange(len(self.section_seq), dtype=np.float),
+                                                                  np.arange(len(self.section_seq), dtype=float),
                                                                   values_at_sections[:, i_var])
         if self.has_floodplain:
             for (pos_start, pos_end), z in zip(self.casiers_nodes_idx, z_at_casiers):
